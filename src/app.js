@@ -117,7 +117,7 @@ app.post('/help', async (req, res) => {
 
 
 connectDb().then(() => {
-    app.listen(3000, async () => {
+    app.listen(5000, async () => {
         console.log('Server Started on port 3000')
     })
 

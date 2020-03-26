@@ -2,4 +2,4 @@ const approvedString = "Aaron Gold <aargold@deloitte.com>; Aaron Gold <ahg@aaron
 
 var array = approvedString.split(/[\<>]/);
 module.exports = array;
-console.log(array)
+// console.log(array)
