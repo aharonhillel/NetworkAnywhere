@@ -1,7 +1,7 @@
 const { Pool, Client } = require('pg')
 const client = new Client({
   user: 'aaron',
-  host: 'localhost',
+  host: process.env.DATABASE_URL,
   database: 'zoomdb',
   password: '6/8/97',
   port: 5432,
