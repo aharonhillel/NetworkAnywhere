@@ -1,12 +1,19 @@
-const { Pool, Client } = require('pg')
+if(NODE_ENV !== 'production') {
+  const { Pool, Client } = require('pg')
 const client = new Client({
   user: 'aaron',
-  host: process.env.DATABASE_URL,
+  host: localhost,
   database: 'zoomdb',
   password: '6/8/97',
   port: 5432,
 
 })
+
+const { Pool } = require('pg');
+const client = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+});
 
 module.exports = client;
 
