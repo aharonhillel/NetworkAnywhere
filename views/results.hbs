@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title> AD Water Cooler</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+<!--===============================================================================================-->
+</head>
+<body>
+	
+    <div class="container-fluid container-login100" style="background-image: url('images/bg-01.jpg');">
+    <div class="row">
+        <div class="col-lg-12 row-eq-height">
+			<div class="wrap-login100">
+				<form class="login100-form validate-form" action="/help" method="post">
+					<span class="login100-form-logo">
+						<i class="zmdi zmdi-landscape"></i>
+					</span>
+
+				<p class="result-text">
+					
+					{{introText}} <br>
+				
+					{{#each responseText}}
+						<a href="mailto:{{email}}">{{first_name}} ({{email}}), </a>
+					{{else}}
+					Sadly, no one is free during this time! Keep filling out the form with your updated availability and hopefully you'll be showing off your pupper or cat soon!
+					{{/each}}
+				</p>
+
+				<p id="hint"><Hint: click on a person's name to email them</p>
+
+                     
+				</form>
+			</div>
+        </div>
+       
+     
+    </div>
+</div>
+
+
+	<div id="dropDownSelect1"></div>
+	
+<!--===============================================================================================-->
+	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+<!--===============================================================================================-->
+	<script src="js/main.js"></script>
+
+</body>
+</html>
+<style>
+
+
+.result-text{
+	text-align: center;
+	margin-top: 20px;
+	color:#fff;
+}
+.result-text a{
+	color: white;
+}
+.result-text a:hover{
+	color:lightskyblue;
+}
+</style>

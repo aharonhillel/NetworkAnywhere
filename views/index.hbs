@@ -41,6 +41,7 @@
 					<span class="login100-form-title p-b-34 p-t-27">
 						"Grab Coffee" with your friends and colleagues!
 					</span>
+                    <p id="error-text"></p>
 
                       <div class="wrap-input100 validate-input" data-validate = "Enter Your Full Name">
 						<input class="input100" type="text" name="name" placeholder="Your Full Name">
@@ -49,7 +50,7 @@
 
 
 					<div class="wrap-input100 validate-input" data-validate = "Enter Your Email">
-						<input class="input100" type="text" name="email" placeholder="Your Email">
+						<input class="input100" type="text" name="email" placeholder="Your Email" onfocusout="validateEmail(email)"> 
 						<span class="focus-input100" data-placeholder="&#xf0e0;"></span>
 					</div>
 					<div class="contact100-form-checkbox">
@@ -58,7 +59,7 @@
 					</div>
 
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn">
+						<button class="login100-form-btn" id="submit-button">
 							Socialize!
 						</button>
 					</div>
@@ -135,6 +136,23 @@
 <script>
     $("input[type='number']").inputSpinner();
 </script> 
+
+<script>
+    function validateEmail(email) { 
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+       
+        //Email valid. Procees to test if it's from the right domain (Second argument is to check that the string ENDS with this domain, and that it doesn't just contain it)
+        if(email.value.toLowerCase().includes("@deloitte.com")){
+         document.getElementById("error-text").innerHTML = "";
+            const button = document.getElementById('submit-button')
+            button.disabled = false;
+        }else{
+            document.getElementById("error-text").innerHTML = "<span style='padding-bottom:20px'>Error: Please enter a Deloitte email address </span>";
+            const button = document.getElementById('submit-button')
+            button.disabled = true;
+        }
+}
+</script>
 </body>
 </html>
 <style>
@@ -213,5 +231,10 @@ color: black;
 }
 .login100-form-title{
     font-size: 20px;
+}
+#error-text{
+    color:red;
+    font-size: 16px;
+    font-style: italic;
 }
 </style>
