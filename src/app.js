@@ -97,7 +97,7 @@ app.post('/results', async (req, res) => {
             sendEmail(options);
         } else {
             console.log("No users matched, so no emails sending!")
-            res.render('results', { responseText: null, introText: """ });
+            res.render('results', { responseText: null, introText: "" });
   
         }
     } catch (error) {
