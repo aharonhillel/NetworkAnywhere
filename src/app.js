@@ -97,6 +97,8 @@ app.post('/results', async (req, res) => {
             sendEmail(options);
         } else {
             console.log("No users matched, so no emails sending!")
+            res.render('results', { responseText: null, introText: """ });
+  
         }
     } catch (error) {
         console.log(error)
@@ -130,7 +132,7 @@ function find_relevant(result, first_name, email) {
     // console.log(result);
     // Send an email with the below
     let subject = ""
-    let html_response = "Hi" + first_name +", <br>"
+    let html_response = "Hi " + first_name +", <br><br>"
     result.rows.forEach(element => {
         //need to make this a loop for all the possibe matches
         const up_first_letter = element.first_name.charAt(0).toUpperCase() + element.first_name.substring(1);
@@ -142,13 +144,13 @@ function find_relevant(result, first_name, email) {
     });
     subject = subject + " & " + first_name.charAt(0).toUpperCase() + first_name.substring(1);
     if (toEmails.length > 2) {
-        html_response = html_response + subject + "are all free right now! We sugest you ping them on Teams or Skype to chat more!";
+        html_response = html_response + subject + " are all free right now! We sugest you ping them on Teams or Skype to chat more!";
         subject += " You're all free now!";
     } else if (toEmails.length == 2) {
         html_response = html_response + subject + ", you are both free right now! We sugest you ping them on Teams or Skype to chat more!";
         subject += " You're both free now!";
     }
-    console.log("to emails:" + toEmails)
+   html_response += "<br><br> To add new future availability, please  <a href='https://secure-scrubland-04151.herokuapp.com/'>Click here:"
     return {
         subject,
         toEmails,
