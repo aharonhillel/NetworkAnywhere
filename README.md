@@ -14,6 +14,7 @@ NodeJS with Postgres Database, deployed on Heroku
 * User accounts to update availability
 * Team's integrated Chatbot
 * Sync with Outlook calendar for automatic integration
+* Ability to unsubscribe from messages
 
 
 ## Authors

@@ -7,11 +7,11 @@ const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
 const pg = require('pg')
-require('dotenv/config') //enviornmental variables
+require('dotenv').config() //enviornmental variables
 const bodyParser = require('body-parser')
 
 const db = require('../db/database');
-var email_sender = require('./email_sender');
+// var email_sender = require('./email_sender');
 var approvedList = require('./approved-list')
 
 const app = express()
@@ -38,8 +38,21 @@ const sendEmail = require('./email_sender');
 app.get('', (req, res) => {
     res.render('index')
 })
-app.get('/help', (req, res) => {
+app.get('/results', (req, res) => {
     res.render('index')
+})
+
+app.get('/unsubscribe', async (req, res) => {
+    const email = req.query.email
+    const result = await db.query(
+        "DELETE FROM requests WHERE email=$1;",
+        [email], //5 minute buffer for overlap
+    );
+    if(result){
+    res.render('results', { responseText: null, unsubscribe: "unsubscribe", introText: email + " has been unsubscribed from emails and your availability has been removed. Good luck with your work!" });
+    }else{
+        res.render('results', { responseText: null, unsubscribe: "unsubscribe", introText: email + " cannot ben unsubscribed from emails, please check that the email in the url is correct, or contact me at Aargold@deloitte.com" }); 
+    }
 })
 
 
@@ -146,7 +159,7 @@ function find_relevant(result, first_name, email) {
         html_response = html_response + subject + ", you are both free right now! We sugest you ping each other on Teams or Skype to chat more!";
         subject += " You're both free now!";
     }
-    html_response += "<br><br> To add new future availability, please  <a href='https://secure-scrubland-04151.herokuapp.com/'>click here:"
+    html_response += "<br><br> To add new future availability, please  <a href='https://secure-scrubland-04151.herokuapp.com/'>click here: <br><br> To unsubscribe, please <a href='https://secure-scrubland-04151.herokuapp.com/unsubscribec?email="+email+">Click here</a>"
     return {
         subject,
         toEmails,

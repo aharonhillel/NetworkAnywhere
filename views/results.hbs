@@ -33,6 +33,8 @@
 				
 					{{#each responseText}}
 						<a href="mailto:{{email}}">{{first_name}} ({{email}}), </a>
+					{{else if unsubscribe}}
+
 					{{else}}
 					Sadly, no one is free during this time! Keep filling out the form with your updated availability and hopefully you'll be showing off your puppy or cat soon!
 					{{/each}}
