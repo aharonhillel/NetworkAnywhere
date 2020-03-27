@@ -85,10 +85,6 @@ app.post('/results', async (req, res) => {
             html_response: releventName.html_response
         };
         if (releventName.toEmails.length > 1) {
-            //    const a = "(UPDATE requests SET sent=$1 WHERE email = $2;)',
-            //         [1,releventName.toEmails[0]]," //5 minute buffer for overlap
-
-            // res.send(result.rows);
             if (releventName.toEmails.length < 3) {
                 res.render('results', { responseText: result.rows, introText: "You have been paired with the following person:" });
             } else {
