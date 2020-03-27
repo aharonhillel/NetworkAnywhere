@@ -1,3 +1,4 @@
+
 console.log(process.env.NODE_ENV)
 // if(process.env.NODE_ENV == 'development') {
 //   const { Pool, Client } = require('pg')
@@ -14,7 +15,7 @@ console.log(process.env.NODE_ENV)
 const { Pool } = require('pg');
 const client = new Pool({
   connectionString: process.env.DATABASE_URL,
-  // ssl: true
+  ssl: true
 });
 // }
 
