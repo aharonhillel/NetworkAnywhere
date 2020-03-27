@@ -46,7 +46,7 @@ app.get('/help', (req, res) => {
 
 
 
-app.post('/help', async (req, res) => {
+app.post('/results', async (req, res) => {
 
     if (!approvedList.includes(req.body.email)) {
         res.render('results', { responseText: null, introText: "Unfortunately, this site is currently limited to Applied Design as a pilot. If you believe you are receiving this as an error. Please ping Aaron Hillel Gold (aargold@deloitte.com)" });
@@ -82,14 +82,15 @@ app.post('/help', async (req, res) => {
             from: 'from@from.com',
             to: releventName.toEmails,
             subject: releventName.subject,
+            html_response: releventName.html_response
         };
-        if (releventName.toEmails.length > 0) {
+        if (releventName.toEmails.length > 1) {
             //    const a = "(UPDATE requests SET sent=$1 WHERE email = $2;)',
             //         [1,releventName.toEmails[0]]," //5 minute buffer for overlap
 
             // res.send(result.rows);
-            if (releventName.toEmails.length > 1) {
-                res.render('results', { responseText: result.rows, introText: "You have been paired with the following people:" });
+            if (releventName.toEmails.length < 3) {
+                res.render('results', { responseText: result.rows, introText: "You have been paired with the following person:" });
             } else {
                 res.render('results', { responseText: result.rows, introText: "You have been paired with the following person:" });
             }
@@ -129,6 +130,7 @@ function find_relevant(result, first_name, email) {
     // console.log(result);
     // Send an email with the below
     let subject = ""
+    let html_response = "Hi" + first_name +", <br>"
     result.rows.forEach(element => {
         //need to make this a loop for all the possibe matches
         const up_first_letter = element.first_name.charAt(0).toUpperCase() + element.first_name.substring(1);
@@ -139,14 +141,17 @@ function find_relevant(result, first_name, email) {
         toEmails.push(element.email)
     });
     subject = subject + " & " + first_name.charAt(0).toUpperCase() + first_name.substring(1);
-    if (toEmails.length > 1) {
+    if (toEmails.length > 2) {
+        html_response = html_response + subject + "are all free right now! We sugest you ping them on Teams or Skype to chat more!";
         subject += " You're all free now!";
-    } else if (toEmails.length == 1) {
+    } else if (toEmails.length == 2) {
+        html_response = html_response + subject + ", you are both free right now! We sugest you ping them on Teams or Skype to chat more!";
         subject += " You're both free now!";
     }
     console.log("to emails:" + toEmails)
     return {
         subject,
         toEmails,
+        html_response,
     };
 }
