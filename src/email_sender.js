@@ -42,7 +42,7 @@ async function sendEmail(options) {
 
   // send mail with defined transport object
   const info = await transporter.sendMail({
-    from, // sender address
+    from: 'Social Chats <minutechatgreendot@gmail.com>', // sender address
     to, // list of receivers
     subject, // subject line
     text: html_response, // plain text body
