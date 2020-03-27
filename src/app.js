@@ -141,7 +141,7 @@ function find_relevant(result, first_name, email) {
     // console.log(result);
     // Send an email with the below
     let subject = ""
-    let html_response = "Hi " + first_name.charAt(0).toUpperCase() + ", <br><br>"
+    let html_response = "Hi " + first_name.charAt(0).toUpperCase()+first_name.substring(1) + ", <br><br>"
     result.rows.forEach(element => {
         //need to make this a loop for all the possibe matches
         const up_first_letter = element.first_name.charAt(0).toUpperCase() + element.first_name.substring(1);
