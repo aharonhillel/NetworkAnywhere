@@ -92,7 +92,7 @@ app.post('/results', async (req, res) => {
             if (releventName.toEmails.length < 3) {
                 res.render('results', { responseText: result.rows, introText: "You have been paired with the following person:" });
             } else {
-                res.render('results', { responseText: result.rows, introText: "You have been paired with the following person:" });
+                res.render('results', { responseText: result.rows, introText: "You have been paired with the following people:" });
             }
             sendEmail(options);
         } else {

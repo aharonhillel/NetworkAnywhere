@@ -21,7 +21,8 @@ async function sendEmail(options) {
     const {
         from,
         to,
-        subject
+        subject, 
+        html_response
     } = options;
 
   // Generate test SMTP service account from ethereal.email
@@ -29,7 +30,6 @@ async function sendEmail(options) {
   // const testAccount = await nodemailer.createTestAccount();
 
  
-  console.log("Accss TOken: " + accessToken)
 
   const transporter  = nodemailer.createTransport({      
     host: "smtp.gmail.com",
