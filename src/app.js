@@ -11,8 +11,8 @@ require('dotenv/config') //enviornmental variables
 const bodyParser = require('body-parser')
 
 const db = require('../db/database');
-var email_sender = require('../email_sender');
-var approvedList = require('../approved-list')
+var email_sender = require('./email_sender');
+var approvedList = require('./approved-list')
 
 const app = express()
 const publicDirectoryPath = path.join(__dirname, '../public')
@@ -33,7 +33,7 @@ function connectDb() {
     });
 }
 
-const sendEmail = require('./../email_sender');
+const sendEmail = require('./email_sender');
 
 app.get('', (req, res) => {
     res.render('index')
