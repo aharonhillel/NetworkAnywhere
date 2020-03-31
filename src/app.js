@@ -159,7 +159,7 @@ function find_relevant(result, first_name, email) {
         html_response = html_response + subject + ", you are both free right now! We sugest you ping each other on Teams or Skype to chat more!";
         subject += " You're both free now!";
     }
-    html_response += "<br><br> To add new future availability, please  <a href='https://secure-scrubland-04151.herokuapp.com/'>click here:</a> <br><br> To unsubscribe, please <a href='https://secure-scrubland-04151.herokuapp.com/unsubscribe?email="+email+"'>Click here</a>"
+    html_response += "<br><br> To add new future availability, please  <a href='https://secure-scrubland-04151.herokuapp.com/'>click here:</a> <br><br> To unsubscribe, or update/delete your availability please <a href='https://secure-scrubland-04151.herokuapp.com/unsubscribe?email="+email+"'>Click here</a>"
     return {
         subject,
         toEmails,
