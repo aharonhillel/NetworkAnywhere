@@ -10,13 +10,13 @@ const pg = require('pg')
 require('dotenv').config() //enviornmental variables
 const bodyParser = require('body-parser')
 
-const db = require('../db/database');
+const db = require('./db/database');
 // var email_sender = require('./email_sender');
-var approvedList = require('./approved-list')
+var approvedList = require('./src/approved-list')
 
 const app = express()
-const publicDirectoryPath = path.join(__dirname, '../public')
-const partialsPath = path.join(__dirname, '../partials')
+const publicDirectoryPath = path.join(__dirname, './public')
+const partialsPath = path.join(__dirname, './partials')
 
 
 app.use(bodyParser.json())
@@ -33,7 +33,7 @@ function connectDb() {
     });
 }
 
-const sendEmail = require('./email_sender');
+const sendEmail = require('./src/email_sender');
 
 app.get('', (req, res) => {
     res.render('index')
@@ -132,6 +132,10 @@ connectDb().then(() => {
     app.listen(process.env.PORT, async () => {
         console.log('Server Started on port 3000')
     })
+
+    if (process.send) {
+        process.send('online');
+    }
 
 })
 
