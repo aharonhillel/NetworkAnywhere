@@ -6,7 +6,8 @@ require('dotenv').config() //enviornmental variables
 const bodyParser = require('body-parser')
 
 const db = require('./db/database');
-// var email_sender = require('./email_sender');
+const sendEmail = require('./src/email_sender');
+
 var approvedList = require('./src/approved-list')
 
 const app = express()
@@ -28,7 +29,6 @@ function connectDb() {
     });
 }
 
-const sendEmail = require('./src/email_sender');
 
 app.get('', (req, res) => {
     res.render('index')
@@ -74,7 +74,6 @@ app.post('/results', async (req, res) => {
         lastName.charAt(0).toUpperCase() + lastName.substring(1)
     }
 
-
     var arrayOfFiltersParams = new Array();
     if (!req.body.filters) {
         arrayOfFiltersParams.push("no-filters")
@@ -105,7 +104,7 @@ app.post('/results', async (req, res) => {
             } else {
                 res.render('results', { responseText: result.rows, introText: "You have been paired with the following people:" });
             }
-            // sendEmail(options);
+            sendEmail(options);
         } else {
             console.log("No users matched, so no emails sending!")
             res.render('results', { responseText: null, introText: "" });
