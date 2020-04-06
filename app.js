@@ -1,8 +1,3 @@
-//Things to do:
-//flag in db if already sent so that you get a better message saying you can add a third+ person
-//Response page should show if theres anyone that matches your feed
-//Ajax would be great!
-
 const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
@@ -48,10 +43,10 @@ app.get('/unsubscribe', async (req, res) => {
         "DELETE FROM requests WHERE email=$1;",
         [email], //5 minute buffer for overlap
     );
-    if(result){
-    res.render('results', { responseText: null, unsubscribe: "unsubscribe", introText: email + " has been unsubscribed from emails and your availability has been removed. Good luck with your work!" });
-    }else{
-        res.render('results', { responseText: null, unsubscribe: "unsubscribe", introText: email + " cannot ben unsubscribed from emails, please check that the email in the url is correct, or contact me at Aargold@deloitte.com" }); 
+    if (result) {
+        res.render('results', { responseText: null, unsubscribe: "unsubscribe", introText: email + " has been unsubscribed from emails and your availability has been removed. Good luck with your work!" });
+    } else {
+        res.render('results', { responseText: null, unsubscribe: "unsubscribe", introText: email + " cannot ben unsubscribed from emails, please check that the email in the url is correct, or contact me at Aargold@deloitte.com" });
     }
 })
 
@@ -61,49 +56,56 @@ app.get('/unsubscribe', async (req, res) => {
 
 app.post('/results', async (req, res) => {
 
-    if (!approvedList.includes(req.body.email)) {
-        res.render('results', { responseText: null, introText: "Unfortunately, this site is currently limited to Applied Design as a pilot. If you believe you are receiving this as an error. Please ping Aaron Hillel Gold (aargold@deloitte.com)" });
-    }
+    // if (!approvedList.includes(req.body.email)) {
+    //     res.render('results', { responseText: null, introText: "Unfortunately, this site is currently limited to Applied Design as a pilot. If you believe you are receiving this as an error. Please ping Aaron Hillel Gold (aargold@deloitte.com)" });
+    // }
 
-    console.log(req.body);
     const startTime = Date.now();
-    console.log(startTime)
-
+    const email = req.body.email
     const name = req.body.name
-    const firstName = name.split(" ")[0].toLowerCase();
+    const minutesFree = parseInt(req.body.minutes);
+    const endTime = startTime + (minutesFree * 60 * 1000);
+
+    var firstName = name.split(" ")[0].toLowerCase();
+    firstName = firstName.charAt(0).toUpperCase() + firstName.substring(1);
     var lastName = ""
     if (typeof name.split(" ")[1] != "undefined") {
         lastName = name.split(" ")[1].toLowerCase();
+        lastName.charAt(0).toUpperCase() + lastName.substring(1)
     }
 
-    const email = req.body.email
 
-    const minutesFree = parseInt(req.body.minutes);
-    // const first_name
-    const endTime = startTime + (minutesFree * 60 * 1000);
-    console.log("End time is: " + endTime)
-
+    var arrayOfFiltersParams = new Array();
+    if (!req.body.filters) {
+        arrayOfFiltersParams.push("no-filters")
+    } else {
+        for (var key in req.body.filters) {
+            //take hash and make it into array for check with query
+            arrayOfFiltersParams.push(req.body.filters[key]);
+        }
+    }
 
     try {
         const result = await db.query(
-            "SELECT * FROM requests WHERE end_time > $1;",
-            [startTime + (5 * 60 * 1000)], //5 minute buffer for overlap
+            "SELECT DISTINCT requests_id, first_name, email, last_name, start_time, end_time FROM requests INNER JOIN filters ON requests.id = filters.requests_id WHERE end_time > $1 AND filter_name = ANY ($2)",
+             [startTime + (5 * 60 * 1000), arrayOfFiltersParams], //5 minute buffer for overlap
         );
-        const releventName = find_relevant(result, firstName, email);
+
+        const relevantName = compileEmailToSenders(result, firstName, email);
 
         const options = {
-            from: 'from@from.com',
-            to: releventName.toEmails,
-            subject: releventName.subject,
-            html_response: releventName.html_response
+            // from: 'from@from.com',
+            to: relevantName.toEmails,
+            subject: relevantName.subject,
+            html_response: relevantName.html_response
         };
-        if (releventName.toEmails.length > 1) {
-            if (releventName.toEmails.length < 3) {
+        if (relevantName.toEmails.length > 1) {
+            if (relevantName.toEmails.length < 3) {
                 res.render('results', { responseText: result.rows, introText: "You have been paired with the following person:" });
             } else {
                 res.render('results', { responseText: result.rows, introText: "You have been paired with the following people:" });
             }
-            sendEmail(options);
+            // sendEmail(options);
         } else {
             console.log("No users matched, so no emails sending!")
             res.render('results', { responseText: null, introText: "" });
@@ -114,17 +116,21 @@ app.post('/results', async (req, res) => {
     }
 
     try {
-        await db.query(
-            "INSERT INTO requests(first_name, last_name, email, start_time, end_time)VALUES($1, $2, $3, $4, $5)",
+        const userIdReturned =  await db.query(
+            "INSERT INTO requests(first_name, last_name, email, start_time, end_time)VALUES($1, $2, $3, $4, $5) RETURNING id",
             [firstName, lastName, email, startTime, endTime],
         );
+        var returned_row_id = userIdReturned.rows[0].id
+        arrayOfFiltersParams.forEach(element => {
+           db.query(
+            "INSERT INTO filters(filter_name, requests_id)VALUES($1, $2)",
+            [element, returned_row_id]
+             );
+        });
+        
     } catch (error) {
         console.log(error)
     }
-    // db.end();
-
-
-
 })
 
 
@@ -140,22 +146,20 @@ connectDb().then(() => {
 })
 
 
-function find_relevant(result, first_name, email) {
+function compileEmailToSenders(result, firstName, email) {
     let toEmails = [email];
-    // console.log(result);
     // Send an email with the below
     let subject = ""
-    let html_response = "Hi " + first_name.charAt(0).toUpperCase()+first_name.substring(1) + ", <br><br>"
+    let html_response = "Hi " + firstName + ", <br><br>"
     result.rows.forEach(element => {
         //need to make this a loop for all the possibe matches
-        const up_first_letter = element.first_name.charAt(0).toUpperCase() + element.first_name.substring(1);
-        subject = subject + " " + up_first_letter
+        subject = subject + " " + element.first_name
         if (result.rows.length > 1) {
             subject += ","
         }
         toEmails.push(element.email)
     });
-    subject = subject + " & " + first_name.charAt(0).toUpperCase() + first_name.substring(1);
+    subject = subject + " & " + firstName;
     if (toEmails.length > 2) {
         html_response = html_response + subject + " are all free right now! We sugest you ping them on Teams or Skype to chat more!";
         subject += " You're all free now!";
@@ -163,7 +167,7 @@ function find_relevant(result, first_name, email) {
         html_response = html_response + subject + ", you are both free right now! We sugest you ping each other on Teams or Skype to chat more!";
         subject += " You're both free now!";
     }
-    html_response += "<br><br> To add new future availability, please  <a href='https://secure-scrubland-04151.herokuapp.com/'>click here:</a> <br><br> To unsubscribe, or update/delete your availability please <a href='https://secure-scrubland-04151.herokuapp.com/unsubscribe?email="+email+"'>Click here</a>"
+    html_response += "<br><br> To add new future availability, please  <a href='http://social-chat-d.herokuapp.com/'>click here:</a> <br><br> To unsubscribe, or update/delete your availability please <a href='http://social-chat-d.herokuapp.com//unsubscribe?email=" + email + "'>Click here</a>"
     return {
         subject,
         toEmails,
