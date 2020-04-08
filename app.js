@@ -79,6 +79,7 @@ app.post('/results', async (req, res) => {
         arrayOfFiltersParams.push("no-filters")
     } else {
         for (var key in req.body.filters) {
+            console.log(req.body.filters[key]);
             //take hash and make it into array for check with query
             arrayOfFiltersParams.push(req.body.filters[key]);
         }
